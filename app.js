@@ -8,6 +8,8 @@ const hpp = require('hpp');
 const helmet = require('helmet');
 const csp = require('express-csp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
+
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
 const userRouter = require('./routes/userRoute');
@@ -95,7 +97,7 @@ csp.extend(app, {
     },
   },
 });
-
+app.use(compression());
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 //IMPLEMENTING RATE-LIMITING TO PREVENT BRUTE-FORCE ATTACKS AND DENIAL OF SERVICES..limiter is a middleware function
 //whose inner functionality will be implemented by the package that we just installed.

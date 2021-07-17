@@ -58,7 +58,7 @@ module.exports = (err, req, res, next) => {
         400
       );
     }
-    // console.log(err);
+    console.log(err);
     if (err._message === 'Validation failed') {
       error = new AppError(`A error occured , ${err.message}`, 400);
     }

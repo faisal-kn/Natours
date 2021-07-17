@@ -50,9 +50,9 @@ module.exports = class Email {
     //create a transport and send the email
     await this.newTransport().sendMail(mailOptions, (err, data) => {
       if (err) {
-        console.log(err);
+        // console.log(err);
       } else {
-        console.log(data);
+        // console.log(data);
       }
     });
   }

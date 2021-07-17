@@ -79,7 +79,7 @@ exports.login = catchAsync(async (req, res, next) => {
 //the token is provided as header to the server.so use it from there.
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
-  console.log(req.cookies);
+  // console.log(req.cookies);
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
