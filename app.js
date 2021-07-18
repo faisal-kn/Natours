@@ -18,6 +18,7 @@ const reviewRouter = require('./routes/reviewRoute');
 const tourRouter = require('./routes/tourRoute');
 const viewRouter = require('./routes/viewRoute');
 const bookingRouter = require('./routes/bookingRoute');
+const bookingController = require('./controllers/bookingController');
 
 //express is a function that upon will add a bunch of method to the app
 const app = express();
@@ -110,6 +111,14 @@ const limiter = rateLimit({
   message: 'Too many request from this api .Please try again in 1 hour',
 });
 app.use('/api', limiter);
+
+//we need body as a stream and not as a json so it will be defined here. whenever there will be a succesful payment 
+//stripe will send a post request which we can listen and create our booking document.
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 //IS USED TO GET REQ.BODY .it is bodyparser it reads the data from body to req.body..
 app.use(express.json({ limit: '10kb' }));
