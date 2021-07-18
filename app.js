@@ -10,6 +10,7 @@ const csp = require('express-csp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
@@ -112,11 +113,11 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-//we need body as a stream and not as a json so it will be defined here. whenever there will be a succesful payment 
+//we need body as a stream and not as a json so it will be defined here. whenever there will be a succesful payment
 //stripe will send a post request which we can listen and create our booking document.
 app.post(
   '/webhook-checkout',
-  express.raw({ type: 'application/json' }),
+  bodyParser.raw({ type: 'application/json' }),
   bookingController.webhookCheckout
 );
 
