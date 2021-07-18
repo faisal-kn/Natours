@@ -6,16 +6,15 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const Email = require('../utils/email');
 
-const createSendToken = function (user, statusCode, res, token) {
+const createSendToken = function (user, statusCode, req, res, token) {
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     //COOKIE CANNOT BE MODIFIED IN ANYWAY BY THE BROWSER..
     httpOnly: true,
+    secure: req.secure || req.headers('x-forwarded-proto') === 'https',
   };
-  //THIS WILL ALLOW COOKIE TO BE SEND ONLY OVER HTTPS.
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   //'jwt' is cookie name. it is identifier . if another cookie with same name is recieved then it will store the new cookie.
   res.cookie('jwt', token, cookieOptions);
   //confirmPassword was set to undefined before saving the document so it was not persisted to the database . but password
@@ -55,7 +54,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   const url = `${req.protocol}://${req.get('host')}/me#`;
   new Email(newUser, url).sendWelcome();
-  createSendToken(newUser, 201, res, token);
+  createSendToken(newUser, 201, req, res, token);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -73,7 +72,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
-  createSendToken(user, 200, res, token);
+  createSendToken(user, 200, req, res, token);
 });
 
 //the token is provided as header to the server.so use it from there.
@@ -206,7 +205,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
-  createSendToken(user, 200, res, token);
+  createSendToken(user, 200, req, res, token);
 });
 
 //UPDATING THE PASSWORD WHEN THE USER IS LOGGED IN.. WE WILL NEED TO CONFIRM PASSWORD BECAUSE OUR WEBSITE CAN BE OPEN AND
@@ -234,5 +233,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
-  createSendToken(user, 200, res, token);
+  createSendToken(user, 200, req, res, token);
 });

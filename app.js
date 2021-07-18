@@ -20,6 +20,7 @@ const bookingRouter = require('./routes/bookingRoute');
 
 //express is a function that upon will add a bunch of method to the app
 const app = express();
+app.enable('trust proxy');
 
 //setting up a engine template
 app.set('view engine', 'pug');
